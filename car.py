@@ -1,7 +1,8 @@
-import threading
+from threading import *
 
 class Car:
     allCars = dict()
+    obj = Semaphore(1) 
     
     def __init__(self, location, speed, direction, size, key):
         # format of roadParams: (direction, lowerBound, upperBound)
@@ -18,15 +19,15 @@ class Car:
         self.context = (50, self.inTransition, [[False, False, False], [True, self, True], [False, False, False]])
     
     def getAllCars(self):
-        lock.acquire()
+        obj.acquire()
         all_cars = self.allCars
-        lock.release()
+        obj.release()
         return all_cars
     
     def addCarToAllCars(self, car):
-        lock.acquire()
+        obj.acquire()
         self.allCars[self.key] = car
-        lock.release()
+        obj.release()
         
     def getState(self):
         return self.state
