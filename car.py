@@ -43,29 +43,33 @@ class Car:
     def setContext(self, neighbors):
         self.context = (self.inTransition, [[False, False, False], [True, self, True], [False, False, False]])
         for neighbor in neighbors:
+            y_size = self.size[1]
+            x_size = self.size[0]
+            x_loc = self.state[0][0]
+            y_loc = self.state[0][1]
             # Bottom Right
-            if (-2 * self.state[0][1] <= neighbor.state[0][1] <= -self.state[0][1]) and (self.size[0] <= neighbor.state[0][0] <= 2 * self.size[0]):
+            if ((y_loc + y_size/2 + (2 * y_size)) <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc + x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2 + 2 * x_size):
                 self.context[1][2][2] = neighbor
             # Right
-            elif (-self.size[1] <= neighbor.state[0][1] <= self.size[1]) and (self.size[0] <= neighbor.state[0][0] <= 2 * self.size[0]):
+            elif (y_loc - y_size/2 <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc + x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2 + 2 * x_size):
                 self.context[1][2][1] = neighbor
             # Top Right
-            elif (self.size[1] < neighbor.state[0][1] <= 2 * self.size[1]) and (self.size[0] <= neighbor.state[0][0] <= 2 * self.size[0]):
+            elif (y_loc - y_size/2 <= neighbor.state[0][1] <= (y_loc - y_size/2 - (2 * y_size))) and (x_loc+ x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2 + 2 * x_size):
                 self.context[1][2][0] = neighbor
             # Top
-            elif (self.size[1] < neighbor.state[0][1] <= 2 * self.size[1]) and (-self.size[0] <= neighbor.state[0][0] <= self.size[0]):
+            elif (y_loc - y_size/2 <= neighbor.state[0][1] <= (y_loc - y_size/2 - (2 * y_size))) and (x_loc - x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2):
                 self.context[1][1][0] = neighbor
             # Top Left
-            elif (self.size[1] <= neighbor.state[0][1] <= 2 * self.size[1]) and (-2 * self.size[0] <= neighbor.state[0][0] <= -self.size[0]):
+            elif (y_loc - y_size/2 <= neighbor.state[0][1] <= (y_loc - y_size/2 - (2 * y_size))) and (x_loc - x_size/2 - 2 * x_size <= neighbor.state[0][0] <= x_loc - x_size/2):
                 self.context[1][0][0] = neighbor
             # Left
-            elif (-self.size[1] <= neighbor.state[0][1] <= self.size[1]) and (-2 * self.size[0] <= neighbor.state[0][0] <= -self.size[0]):
+            elif (y_loc - y_size/2 <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc - x_size/2 - 2 * x_size <= neighbor.state[0][0] <= x_loc - x_size/2):
                 self.context[1][0][1] = neighbor
             # Bottom Left
-            elif (-2 * self.size[1] <= neighbor.state[0][1] <= -self.size[1]) and (-2 * self.size[0] <= neighbor.state[0][0] <= -self.size[0]):
+            elif ((y_loc + y_size/2 + (2 * y_size)) <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc - x_size/2 <= neighbor.state[0][0] <= x_loc - x_size/2 - 2 * x_size):
                 self.context[1][0][2] = neighbor
             # Bottom
-            elif (-2 * self.size[1] <= neighbor.state[0][1] <= -self.size[1]) and (-self.size[0] <= neighbor.state[0][0] <= self.size[0]):
+            elif (y_loc + y_size/2 + (2 * y_size) <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc - x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2):
                 self.context[1][1][2] = neighbor
         self.addCarToAllCars(self)
         print(self.context)
@@ -91,7 +95,7 @@ class Car:
                     if type(neighbors[i][j]) == type(self):
                         neighbor = neighbors[i][j]
                         neighborX = neighbor.state[0][0]
-                        neighborY = neighbor.state[0][i]
+                        neighborY = neighbor.state[0][1]
                         maxXn = neighborX - (neighbor.size[0]/2)
                         minXn = neighborX + (neighbor.size[0]/2)
                         maxYn = neighborY - (neighbor.size[1]/2)
