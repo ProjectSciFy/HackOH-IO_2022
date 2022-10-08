@@ -117,10 +117,22 @@ class Car:
                         elif minX >= maxXn and minY >= maxYn and j == 2 and i == 2:
                             return True
         return False         
+    
+    def inBounds(self):
+        return (self.state[0][0] >= 0 and self.state[0][0] <= 800 and self.state[0][1] >= 0 and self.state[0][1] <= 600)
         
+    def atGoal(self):
+        x_goal = self.goal[0]
+        y_goal = self.goal[1]
+        x_loc = self.state[0][0]
+        y_loc = self.state[0][1]
+        xSize = self.size[0]/2
+        ySize = self.size[1]/2
+        return (x_loc - xSize <= x_goal <= x_loc + xSize) and (y_loc - ySize <= y_goal <= y_loc + ySize)
+    
     def distAlgo(self, /, roadParams = ("W", 300, 300)):
         self.roadParams = roadParams
-        while self.state[0] != self.getRoute()[1] and (self.state[0][0] >= 0 and self.state[0][0] <= 800 and self.state[0][1] >= 0 and self.state[0][1] <= 600):
+        while not self.atGoal() and self.inBounds():
             our_matrix = self.getAllCars()
             self.setContext(our_matrix.values())
             if not self.inTransition:
