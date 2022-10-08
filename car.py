@@ -33,18 +33,21 @@ class Car:
     
     def setState(self, location, speed, direction):
         self.state = (location, speed, direction)
+        self.addCarToAllCars[self.key] = self
     
     def getContext(self):
         return self.context
         
     def setContext(self, neighbors):
         self.context = (self.inTransition, neighbors)
+        self.addCarToAllCars[self.key] = self
     
     def getRoute(self):
         return (self.start, self.goal)
     
     def setRoute(self, goal):
         self.goal = goal
+        self.addCarToAllCars[self.key] = self
     
     def inAccident(self):
         neighbors = self.context[2]
@@ -100,15 +103,19 @@ class Car:
                     if direction == "N":
                         newLocation = (location[0], location[1] - speed)
                         self.state = (newLocation, speed, direction)
+                        self.addCarToAllCars[self.key] = self
                     elif direction == "S":
                         newLocation = (location[0], location[1] + speed)
                         self.state = (newLocation, speed, direction)
+                        self.addCarToAllCars[self.key] = self
                     elif direction == "W":
                         newLocation = (location[0] - speed, location[1])
                         self.state = (newLocation, speed, direction)
+                        self.addCarToAllCars[self.key] = self
                     elif direction == "E":
                         newLocation = (location[0] + speed, location[1])
                         self.state = (newLocation, speed, direction)
+                        self.addCarToAllCars[self.key] = self
                     else:
                         print("<!> ERROR <!>\n")
         return 1
