@@ -6,8 +6,8 @@ class Car:
         self.size = size
         self.context = None
         self.state = (location, speed, direction)
-        self.start = (0, 0)
-        self.goal = (800,600)
+        self.start = (800, 300)
+        self.goal = (800, 600)
         self.inTransition = True
         self.context = (50, self.inTransition, [[False, False, False], [True, self, True], [False, False, False]])
         
