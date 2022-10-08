@@ -43,29 +43,29 @@ class Car:
     def setContext(self, neighbors):
         self.context = (self.inTransition, [[False, False, False], [True, self, True], [False, False, False]])
         for neighbor in neighbors:
-            # Bottom right hand quad
-            if (-2 * self.size[1] <= neighbor.roadParams[1] <= -self.size[1]) and (self.size[0] <= neighbor.roadParams[0] <= 2 * self.size[0]):
+            # Bottom Right
+            if (-2 * self.state[0][1] <= neighbor.state[0][1] <= -self.state[0][1]) and (self.size[0] <= neighbor.state[0][0] <= 2 * self.size[0]):
                 self.context[1][2][2] = neighbor
             # Right
-            if (-self.size[1] <= neighbor.roadParams[1] <= self.size[1]) and (self.size[0] <= neighbor.roadParams[0] <= 2 * self.size[0]):
+            elif (-self.size[1] <= neighbor.state[0][1] <= self.size[1]) and (self.size[0] <= neighbor.state[0][0] <= 2 * self.size[0]):
                 self.context[1][2][1] = neighbor
             # Top Right
-            if (self.size[1] < neighbor.roadParams[1] <= 2 * self.size[1]) and (self.size[0] <= neighbor.roadParams[0] <= 2 * self.size[0]):
+            elif (self.size[1] < neighbor.state[0][1] <= 2 * self.size[1]) and (self.size[0] <= neighbor.state[0][0] <= 2 * self.size[0]):
                 self.context[1][2][0] = neighbor
             # Top
-            if (self.size[1] < neighbor.roadParams[1] <= 2 * self.size[1]) and (-self.size[0] <= neighbor.roadParams[0] <= self.size[0]):
+            elif (self.size[1] < neighbor.state[0][1] <= 2 * self.size[1]) and (-self.size[0] <= neighbor.state[0][0] <= self.size[0]):
                 self.context[1][1][0] = neighbor
             # Top Left
-            if (self.size[1] <= neighbor.roadParams[1] <= 2 * self.size[1]) and (-2 * self.size[0] <= neighbor.roadParams[0] <= -self.size[0]):
+            elif (self.size[1] <= neighbor.state[0][1] <= 2 * self.size[1]) and (-2 * self.size[0] <= neighbor.state[0][0] <= -self.size[0]):
                 self.context[1][0][0] = neighbor
             # Left
-            if (-self.size[1] <= neighbor.roadParams[1] <= self.size[1]) and (-2 * self.size[0] <= neighbor.roadParams[0] <= -self.size[0]):
+            elif (-self.size[1] <= neighbor.state[0][1] <= self.size[1]) and (-2 * self.size[0] <= neighbor.state[0][0] <= -self.size[0]):
                 self.context[1][0][1] = neighbor
             # Bottom Left
-            if (-2 * self.size[1] <= neighbor.roadParams[1] <= -self.size[1]) and (-2 * self.size[0] <= neighbor.roadParams[0] <= -self.size[0]):
+            elif (-2 * self.size[1] <= neighbor.state[0][1] <= -self.size[1]) and (-2 * self.size[0] <= neighbor.state[0][0] <= -self.size[0]):
                 self.context[1][0][2] = neighbor
             # Bottom
-            if (-2 * self.size[1] <= neighbor.roadParams[1] <= -self.size[1]) and (-self.size[0] <= neighbor.roadParams[0] <= self.size[0]):
+            elif (-2 * self.size[1] <= neighbor.state[0][1] <= -self.size[1]) and (-self.size[0] <= neighbor.state[0][0] <= self.size[0]):
                 self.context[1][1][2] = neighbor
         self.addCarToAllCars(self)
         print(self.context)
