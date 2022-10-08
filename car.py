@@ -5,7 +5,7 @@ class Car:
         self.direction = direction
         self.size = size
         self.context = None
-        self.state = (self.location, self.speed, self.direction, self.size)
+        self.state = (self.location, self.speed, self.direction)
         self.speedLimit = 50
         self.start = (0, 0)
         self.goal = (800,600)
@@ -21,7 +21,7 @@ class Car:
         self.speed = speed
         self.direction = direction
         self.size = size
-        self.state = (self.location, self.speed, self.direction, self.size)
+        self.state = (self.location, self.speed, self.direction)
     
     def getContext(self):
         return self.context
