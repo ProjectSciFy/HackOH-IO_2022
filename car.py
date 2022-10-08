@@ -59,7 +59,7 @@ class Car:
             if (self.size[1] <= neighbor.roadParams[1] <= 2 * self.size[1]) and (-2 * self.size[0] <= neighbor.roadParams[0] <= -self.size[0]):
                 self.context[1][0][0] = neighbor
             # Left
-            if (-2 * self.size[1] <= neighbor.roadParams[1] <= -self.size[1]) and (-2 * self.size[0] <= neighbor.roadParams[0] <= -self.size[0]):
+            if (-self.size[1] <= neighbor.roadParams[1] <= self.size[1]) and (-2 * self.size[0] <= neighbor.roadParams[0] <= -self.size[0]):
                 self.context[1][0][1] = neighbor
             # Bottom Left
             if (-2 * self.size[1] <= neighbor.roadParams[1] <= -self.size[1]) and (-2 * self.size[0] <= neighbor.roadParams[0] <= -self.size[0]):

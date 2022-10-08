@@ -78,7 +78,7 @@ class Car:
         self.addCarToAllCars(self)
     
     def inAccident(self):
-        neighbors = self.context[2]
+        neighbors = self.context[1]
         selfX = self.state[0][0]
         selfY = self.state[0][1]
         maxX = selfX - (self.size[0]/2)
