@@ -11,7 +11,7 @@ class Car:
         self.goal = (800,600)
         self.inTransition = False
         self.neighbors = [[False, False, False], [True, self, True], [False, False, False]]
-        self.context = (self.speedLimit, self.start, self.goal, self.inTransition, self.neighbors)
+        self.context = (self.speedLimit, self.inTransition, self.neighbors)
         
     def getState(self):
         return self.state
@@ -32,7 +32,7 @@ class Car:
         self.goal = goal
         self.inTransition = False
         self.neighbors = neighbors
-        self.context = (self.speedLimit, self.start, self.goal, self.inTransition, self.neighbors)
+        self.context = (self.speedLimit, self.inTransition, self.neighbors)
         
     def getSpeedLimit(self):
         return self.speedLimit
