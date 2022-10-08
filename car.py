@@ -79,5 +79,20 @@ class Car:
             if self.inAccident():
                 exit
             else:
-                # good to go!
-                pass
+                location = self.state[0]
+                speed = self.state[1]
+                direction = self.state[2]
+                if direction == "N":
+                    newLocation = (location[0], location[1] - speed)
+                    self.setState = (newLocation, speed, direction)
+                elif direction == "S":
+                    newLocation = (location[0], location[1] + speed)
+                    self.setState = (newLocation, speed, direction)
+                elif direction == "W":
+                    newLocation = (location[0] - speed, location[1])
+                    self.setState = (newLocation, speed, direction)
+                elif direction == "E":
+                    newLocation = (location[0] + speed, location[1])
+                    self.setState = (newLocation, speed, direction)
+                else:
+                    print("<!> ERROR <!>\n")
