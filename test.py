@@ -1,7 +1,6 @@
 import car as CAR
 import os
 
-
 def runCar(car):
     car.setRoute((0, 300))
     car.distAlgo()
@@ -14,9 +13,19 @@ size = (40, 20)
 cars = list()
 amFather = False
 children = []
+temp = 0
 for i in range(int(num)):
-    cars.append(CAR.Car((location[0] - (int(i) * 50), location[1]), speed, direction, size))
+    tempCar = CAR.Car((location[0] - (int(i) * 100), location[1]), speed, direction, size)
+    cars.append(tempCar)
+    CAR.Car.addCarToAllCars(tempCar, i, tempCar)
     print(f"\tStart of car {i + 1}: ", cars[i].getState())
+    temp = i
+    # for i in CAR.Car.allCars.keys():
+    #     print(i, CAR.Car.allCars[i].getState())
+temp += 1
+# car moving other way:
+# cars.append(CAR.Car((700, 300), 50, "W", size))
+# print(f"\tStart of car {temp + 1}: ", cars[temp].getState())
 
 for car in cars:
     pid = os.fork()
