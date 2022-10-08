@@ -78,7 +78,7 @@ class Car:
         while self.state[0] != self.getRoute()[1]:
             if not self.inTransition:
                 if self.inAccident():
-                    exit
+                    return -1
                 else:
                     location = self.state[0]
                     speed = self.state[1]
