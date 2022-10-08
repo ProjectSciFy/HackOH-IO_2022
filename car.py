@@ -5,7 +5,7 @@ obj = Semaphore(1)
 class Car:
     allCars = dict()
     
-    def __init__(self, location, speed, direction, size, key):
+    def __init__(self, location, speed, direction, size, key, lane_left_to_right):
         # format of roadParams: (direction, lowerBound, upperBound)
         # initially: start on right side, middle of lane and road, towards West
         self.key = key
