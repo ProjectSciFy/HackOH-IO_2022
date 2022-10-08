@@ -42,7 +42,33 @@ class Car:
         
     def setContext(self, neighbors):
         self.context = (self.inTransition, neighbors)
+        for neighbor in neighbors:
+            # Bottom right hand quad
+            if (-2 * self.size[1] <= neighbor.roadParams[1] <= -self.size[1]) and (self.size[0] <= neighbor.roadParams[0] <= 2 * self.size[0]):
+                self.context[2][2] = neighbor
+            # Right
+            elif (-self.size[1] <= neighbor.roadParams[1] <= self.size[1]) and (self.size[0] <= neighbor.roadParams[0] <= 2 * self.size[0]):
+                self.context[2][1] = neighbor
+            # Top Right
+            elif (self.size[1] < neighbor.roadParams[1] <= 2 * self.size[1]) and (self.size[0] <= neighbor.roadParams[0] <= 2 * self.size[0]):
+                self.context[2][0] = neighbor
+            # Top
+            elif (self.size[1] < neighbor.roadParams[1] <= 2 * self.size[1]) and (-self.size[0] <= neighbor.roadParams[0] <= self.size[0]):
+                self.context[1][0] = neighbor
+            # Top Left
+            elif (self.size[1] <= neighbor.roadParams[1] <= 2 * self.size[1]) and (-2 * self.size[0] <= neighbor.roadParams[0] <= -self.size[0]):
+                self.context[0][0] = neighbor
+            # Left
+            elif (-2 * self.size[1] <= neighbor.roadParams[1] <= -self.size[1]) and (-2 * self.size[0] <= neighbor.roadParams[0] <= -self.size[0]):
+                self.context[0][1] = neighbor
+            # Bottom Left
+            elif (-2 * self.size[1] <= neighbor.roadParams[1] <= -self.size[1]) and (-2 * self.size[0] <= neighbor.roadParams[0] <= -self.size[0]):
+                self.context[0][2] = neighbor
+            # Bottom
+            elif (-2 * self.size[1] <= neighbor.roadParams[1] <= -self.size[1]) and (-self.size[0] <= neighbor.roadParams[0] <= self.size[0]):
+                self.context[1][2] = neighbor
         self.addCarToAllCars[self.key] = self
+        print(self.context)
     
     def getRoute(self):
         return (self.start, self.goal)
@@ -95,6 +121,8 @@ class Car:
     def distAlgo(self, /, roadParams = ("W", 300, 300)):
         self.roadParams = roadParams
         while self.state[0] != self.getRoute()[1] and (self.state[0][0] >= 0 and self.state[0][0] <= 800 and self.state[0][1] >= 0 and self.state[0][1] <= 600):
+            our_matrix = self.getAllCars()
+            self.setContext(our_matrix)
             if not self.inTransition:
                 if self.inAccident():
                     return -1
