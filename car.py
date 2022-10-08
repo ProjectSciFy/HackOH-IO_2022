@@ -97,3 +97,4 @@ class Car:
                         self.setState = (newLocation, speed, direction)
                     else:
                         print("<!> ERROR <!>\n")
+        return 1
