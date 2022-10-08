@@ -1,8 +1,9 @@
 from threading import *
 
+obj = Semaphore(1) 
+
 class Car:
     allCars = dict()
-    obj = Semaphore(1) 
     
     def __init__(self, location, speed, direction, size, key):
         # format of roadParams: (direction, lowerBound, upperBound)
