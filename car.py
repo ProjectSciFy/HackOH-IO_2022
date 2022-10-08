@@ -74,13 +74,12 @@ class Car:
     # fun!
     def distAlgo(self, /, roadParams = ("W", 300, 300)):
         self.roadParams = roadParams
-        while self.state[0] != self.getRoute()[1]:
+        while self.state[0] != self.getRoute()[1] and self.state[0][0] >= 0 and self.state[0][0] <= 800 and self.state[0][1] >= 0 and self.state[0][1] <= 600:
             if not self.inTransition:
                 if self.inAccident():
                     return -1
                 else:
                     location = self.state[0]
-                    print(location)
                     speed = self.state[1]
                     direction = self.state[2]
                     if direction == "N":
