@@ -72,7 +72,6 @@ class Car:
             elif (y_loc + y_size/2 + (2 * y_size) <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc - x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2):
                 self.context[1][1][2] = neighbor
         self.addCarToAllCars(self)
-        print(self.context)
     
     def getRoute(self):
         return (self.start, self.goal)
@@ -141,6 +140,7 @@ class Car:
             self.setContext(our_matrix.values())
             if not self.inTransition:
                 if self.inAccident():
+                    print(f"--!--  Car crashed at {self.state[0]} going {self.state[2]} at a speed of {self.state[1]}  --!--")
                     return -1
                 else:
                     location = self.state[0]
