@@ -2,7 +2,7 @@ class Car:
     def __init__(self, location, speed, direction, size):
         # format of roadParams: (direction, lowerBound, upperBound)
         # initially: start on right side, middle of lane and road, towards West
-        self.roadParams = ("W", 300, 300)  
+        self.roadParams = ("W", 300, 300)
         self.size = size
         self.context = None
         self.start = location
@@ -15,8 +15,7 @@ class Car:
     def getState(self):
         return self.state
     
-    def setState(self, location, speed, direction, size):
-        self.size = size
+    def setState(self, location, speed, direction):
         self.state = (location, speed, direction)
     
     def getContext(self):
@@ -73,7 +72,7 @@ class Car:
         return False         
         
     # fun!
-    def distAlgo(self, roadParams):
+    def distAlgo(self, /, roadParams = ("W", 300, 300)):
         self.roadParams = roadParams
         while self.state[0] != self.getRoute()[1]:
             if not self.inTransition:
@@ -81,20 +80,21 @@ class Car:
                     return -1
                 else:
                     location = self.state[0]
+                    print(location)
                     speed = self.state[1]
                     direction = self.state[2]
                     if direction == "N":
                         newLocation = (location[0], location[1] - speed)
-                        self.setState = (newLocation, speed, direction)
+                        self.state = (newLocation, speed, direction)
                     elif direction == "S":
                         newLocation = (location[0], location[1] + speed)
-                        self.setState = (newLocation, speed, direction)
+                        self.state = (newLocation, speed, direction)
                     elif direction == "W":
                         newLocation = (location[0] - speed, location[1])
-                        self.setState = (newLocation, speed, direction)
+                        self.state = (newLocation, speed, direction)
                     elif direction == "E":
                         newLocation = (location[0] + speed, location[1])
-                        self.setState = (newLocation, speed, direction)
+                        self.state = (newLocation, speed, direction)
                     else:
                         print("<!> ERROR <!>\n")
         return 1
