@@ -1,154 +1,106 @@
-import pygame
-import time
-import car
-
-pygame.init()
-
-white = (255, 255, 255)
-black = (0, 0, 0)
-red = (255, 0, 0)
-
-dis_width = 800
-dis_height  = 600
-dis = pygame.display.set_mode((dis_width, dis_width))
-
-simulation_over = False
-global_speed = 60
-cars = []
-roads = []
-
-
-def create_road(roads, direction, lanes, x, y):
-    #road = [x, y, car_size * width_scale, car_size * height_scale]
-    #road = [x, 0, 10, dis_width]
-    if direction == 'vertical':
-        road = [[x, 0], [x, dis_height * 2]]
-        roads.append(road)
-
-        for i in range(1, int(lanes / 2) + 1):
-            road = [[x - 50 * i, 0], [x - 50 * i, dis_height * 2]]
-            roads.append(road)
-            road = [[x + 50 * i, 0], [x + 50 * i, dis_height * 2]]
-            roads.append(road)
-    else:
-        road = [[0, y], [dis_width * 2, y]]
-        roads.append(road)
-
-        for i in range(1, int(lanes / 2) + 1):
-            road = [[0, y - 50 * i], [dis_width * 2, y - 50 * i]]
-            roads.append(road)
-            road = [[0, y + 50 * i], [dis_width * 2, y + 50 * i]]
-            roads.append(road)
-
-
-
-def spawn_car(cars, speed, location):
-    width_scale = 1
-    height_scale = 1
-    offset = car_size / 2
-    if location == 'bottom':
-        speeds = [0, -1 * speed ]
-        x = dis_width/2 - offset
-        x = x + 25
-        y = dis_height - 3
-        height_scale = 1.5
-    elif location == 'top':
-        speeds = [0, speed]
-        x = dis_width / 2 - offset
-        x = x - 25
-        y = 3
-        height_scale =  1.5
-    elif location == 'left':
-        speeds = [speed, 0]
-        x = 3
-        y = dis_height / 2 - offset
-        y = y - 25
-        width_scale =  1.5
-    elif location == 'right':
-        speeds = [-1 * speed, 0]
-        x = dis_width - 3
-        y = dis_height / 2 - offset
-        y = y + 25
-        width_scale =  1.5
-
-    car = [x, y, speeds, width_scale, height_scale]
-    cars.append(car)
-
-def update(cars):
-    for car in cars:
-        update_position(car)
-        draw_car(car)
-
-def update_position(car):
-    #car[1] = car[1] + (car[2] / refresh_rate) * 10
-    speeds = car[2]
-    car[0] = car[0] + (speeds[0]/refresh_rate)*10
-    car[1] = car[1] + (speeds[1]/refresh_rate)*10
-    #car[0] = car[0] + (car[2] / refresh_rate) * 10
-
-def draw_car(car):
-    x = car[0]
-    y = car[1]
-    width_scale = car[3]
-    height_scale = car[4]
-    pygame.draw.rect(dis, black, [x, y, car_size * width_scale, car_size * height_scale])
-
-def draw_roads(roads):
-    for road in roads:
-        #pygame.draw.rect(dis, black, road)
-        a = road[0]
-        b = road[1]
-        pygame.draw.line(dis, black, a, b, width=5)
-
-def clear_board():
-    dis.fill(white)
-
-def update_board():
-    pygame.display.update()
-
-def check_input(pygame_events):
-    for event in pygame_events:
-        if event.type == pygame.QUIT:
-            return True
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                spawn_car(cars, global_speed, 'bottom')
-            elif event.key == pygame.K_DOWN:
-                spawn_car(cars, global_speed, 'top')
-            elif event.key == pygame.K_LEFT:
-                spawn_car(cars, global_speed, 'right')
-            elif event.key == pygame.K_RIGHT:
-                spawn_car(cars, global_speed, 'left')
-
-    return False
-
-car_size=30
-
-clock = pygame.time.Clock()
-refresh_rate = 60
-
-create_road(roads, 'vertical', 2,  dis_width/2, dis_height/2)
-create_road(roads, 'horizontal', 2,  dis_width/2, dis_height/2)
-
-while not simulation_over:
-    simulation_over = check_input(pygame.event.get())
-
-    clear_board()
-    update(cars)
-    draw_roads(roads)
-    update_board()
-
-    clock.tick(refresh_rate)
-
-
-font_style = pygame.font.SysFont(None, 50)
-
-def message(msg,color):
-    mesg = font_style.render(msg, True, color)
-    dis.blit(mesg, [dis_width/2, dis_height/2])
-
-message("Simulation Over",red)
-pygame.display.update()
-time.sleep(0.2)
-pygame.quit()
-quit()
+class Car:
+    allCars = dict()
+    
+    def __init__(self, location, speed, direction, size):
+        # format of roadParams: (direction, lowerBound, upperBound)
+        # initially: start on right side, middle of lane and road, towards West
+        self.roadParams = ("W", 300, 300)
+        self.size = size
+        self.context = None
+        self.start = location
+        self.state = (location, speed, direction)
+        self.start = (800, 300)
+        self.goal = (800, 600)
+        self.inTransition = False
+        self.context = (50, self.inTransition, [[False, False, False], [True, self, True], [False, False, False]])
+    
+    def getAllCars(self):
+        return self.allCars
+    
+    def addCarToAllCars(self, key, car):
+        self.allCars[key] = car
+        
+    def getState(self):
+        return self.state
+    
+    def setState(self, location, speed, direction):
+        self.state = (location, speed, direction)
+    
+    def getContext(self):
+        return self.context
+        
+    def setContext(self, neighbors):
+        self.context = (self.inTransition, neighbors)
+    
+    def getRoute(self):
+        return (self.start, self.goal)
+    
+    def setRoute(self, goal):
+        self.goal = goal
+    
+    def inAccident(self):
+        neighbors = self.context[2]
+        selfX = self.state[0][0]
+        selfY = self.state[0][1]
+        maxX = selfX - (self.size[0]/2)
+        minX = selfX + (self.size[0]/2)
+        maxY = selfY - (self.size[1]/2)
+        minY = selfY + (self.size[1]/2)
+        for i in range(3):
+            for j in range(3):
+                if i != j:
+                    if type(neighbors[i][j]) == type(self):
+                        neighbor = neighbors[i][j]
+                        neighborX = neighbor.state[0][0]
+                        neighborY = neighbor.state[0][i]
+                        maxXn = neighborX - (neighbor.size[0]/2)
+                        minXn = neighborX + (neighbor.size[0]/2)
+                        maxYn = neighborY - (neighbor.size[1]/2)
+                        minYn = neighborY + (neighbor.size[1]/2)
+                        # check collision
+                        # left column
+                        if maxX <= minXn and maxY <= minYn and j == 0 and i == 0:
+                            return True
+                        elif maxX <= minXn and j == 0 and i == 1:
+                            return True
+                        elif maxX <= minXn and minY >= maxYn and j == 0 and i == 2:
+                            return True
+                        # middle column
+                        elif maxY <= minYn and j == 1 and i == 0:
+                            return True
+                        elif minY >= maxYn and j == 1 and i == 2:
+                            return True
+                        # right column
+                        elif minX >= maxXn and maxY <= minYn and j == 2 and i == 0:
+                            return True
+                        elif minX >= maxXn and j == 2 and i == 1:
+                            return True
+                        elif minX >= maxXn and minY >= maxYn and j == 2 and i == 2:
+                            return True
+        return False         
+        
+    def distAlgo(self, /, roadParams = ("W", 300, 300)):
+        self.roadParams = roadParams
+        while self.state[0] != self.getRoute()[1] and (self.state[0][0] >= 0 and self.state[0][0] <= 800 and self.state[0][1] >= 0 and self.state[0][1] <= 600):
+            if not self.inTransition:
+                if self.inAccident():
+                    return -1
+                else:
+                    location = self.state[0]
+                    speed = self.state[1]
+                    direction = self.state[2]
+                    if direction == "N":
+                        newLocation = (location[0], location[1] - speed)
+                        self.state = (newLocation, speed, direction)
+                    elif direction == "S":
+                        newLocation = (location[0], location[1] + speed)
+                        self.state = (newLocation, speed, direction)
+                    elif direction == "W":
+                        newLocation = (location[0] - speed, location[1])
+                        self.state = (newLocation, speed, direction)
+                    elif direction == "E":
+                        newLocation = (location[0] + speed, location[1])
+                        self.state = (newLocation, speed, direction)
+                    else:
+                        print("<!> ERROR <!>\n")
+        return 1
