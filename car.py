@@ -17,7 +17,7 @@ class Car:
         self.start = (800, 300)
         self.goal = (800, 600)
         self.inTransition = False
-        self.context = (50, self.inTransition, [[False, False, False], [True, self, True], [False, False, False]])
+        self.context = (self.inTransition, [[False, False, False], [True, self, True], [False, False, False]])
     
     def getAllCars(self):
         obj.acquire()
@@ -35,39 +35,39 @@ class Car:
     
     def setState(self, location, speed, direction):
         self.state = (location, speed, direction)
-        self.addCarToAllCars[self.key] = self
+        self.addCarToAllCars(self)
     
     def getContext(self):
         return self.context
         
     def setContext(self, neighbors):
-        self.context = (self.inTransition, neighbors)
+        self.context = (self.inTransition, [[False, False, False], [True, self, True], [False, False, False]])
         for neighbor in neighbors:
             # Bottom right hand quad
             if (-2 * self.size[1] <= neighbor.roadParams[1] <= -self.size[1]) and (self.size[0] <= neighbor.roadParams[0] <= 2 * self.size[0]):
-                self.context[2][2] = neighbor
+                self.context[1][2][2] = neighbor
             # Right
-            elif (-self.size[1] <= neighbor.roadParams[1] <= self.size[1]) and (self.size[0] <= neighbor.roadParams[0] <= 2 * self.size[0]):
-                self.context[2][1] = neighbor
+            if (-self.size[1] <= neighbor.roadParams[1] <= self.size[1]) and (self.size[0] <= neighbor.roadParams[0] <= 2 * self.size[0]):
+                self.context[1][2][1] = neighbor
             # Top Right
-            elif (self.size[1] < neighbor.roadParams[1] <= 2 * self.size[1]) and (self.size[0] <= neighbor.roadParams[0] <= 2 * self.size[0]):
-                self.context[2][0] = neighbor
+            if (self.size[1] < neighbor.roadParams[1] <= 2 * self.size[1]) and (self.size[0] <= neighbor.roadParams[0] <= 2 * self.size[0]):
+                self.context[1][2][0] = neighbor
             # Top
-            elif (self.size[1] < neighbor.roadParams[1] <= 2 * self.size[1]) and (-self.size[0] <= neighbor.roadParams[0] <= self.size[0]):
-                self.context[1][0] = neighbor
+            if (self.size[1] < neighbor.roadParams[1] <= 2 * self.size[1]) and (-self.size[0] <= neighbor.roadParams[0] <= self.size[0]):
+                self.context[1][1][0] = neighbor
             # Top Left
-            elif (self.size[1] <= neighbor.roadParams[1] <= 2 * self.size[1]) and (-2 * self.size[0] <= neighbor.roadParams[0] <= -self.size[0]):
-                self.context[0][0] = neighbor
+            if (self.size[1] <= neighbor.roadParams[1] <= 2 * self.size[1]) and (-2 * self.size[0] <= neighbor.roadParams[0] <= -self.size[0]):
+                self.context[1][0][0] = neighbor
             # Left
-            elif (-2 * self.size[1] <= neighbor.roadParams[1] <= -self.size[1]) and (-2 * self.size[0] <= neighbor.roadParams[0] <= -self.size[0]):
-                self.context[0][1] = neighbor
+            if (-2 * self.size[1] <= neighbor.roadParams[1] <= -self.size[1]) and (-2 * self.size[0] <= neighbor.roadParams[0] <= -self.size[0]):
+                self.context[1][0][1] = neighbor
             # Bottom Left
-            elif (-2 * self.size[1] <= neighbor.roadParams[1] <= -self.size[1]) and (-2 * self.size[0] <= neighbor.roadParams[0] <= -self.size[0]):
-                self.context[0][2] = neighbor
+            if (-2 * self.size[1] <= neighbor.roadParams[1] <= -self.size[1]) and (-2 * self.size[0] <= neighbor.roadParams[0] <= -self.size[0]):
+                self.context[1][0][2] = neighbor
             # Bottom
-            elif (-2 * self.size[1] <= neighbor.roadParams[1] <= -self.size[1]) and (-self.size[0] <= neighbor.roadParams[0] <= self.size[0]):
-                self.context[1][2] = neighbor
-        self.addCarToAllCars[self.key] = self
+            if (-2 * self.size[1] <= neighbor.roadParams[1] <= -self.size[1]) and (-self.size[0] <= neighbor.roadParams[0] <= self.size[0]):
+                self.context[1][1][2] = neighbor
+        self.addCarToAllCars(self)
         print(self.context)
     
     def getRoute(self):
@@ -75,10 +75,10 @@ class Car:
     
     def setRoute(self, goal):
         self.goal = goal
-        self.addCarToAllCars[self.key] = self
+        self.addCarToAllCars(self)
     
     def inAccident(self):
-        neighbors = self.context[2]
+        neighbors = self.context[1]
         selfX = self.state[0][0]
         selfY = self.state[0][1]
         maxX = selfX - (self.size[0]/2)
@@ -122,7 +122,7 @@ class Car:
         self.roadParams = roadParams
         while self.state[0] != self.getRoute()[1] and (self.state[0][0] >= 0 and self.state[0][0] <= 800 and self.state[0][1] >= 0 and self.state[0][1] <= 600):
             our_matrix = self.getAllCars()
-            self.setContext(our_matrix)
+            self.setContext(our_matrix.values())
             if not self.inTransition:
                 if self.inAccident():
                     return -1
@@ -133,19 +133,19 @@ class Car:
                     if direction == "N":
                         newLocation = (location[0], location[1] - speed)
                         self.state = (newLocation, speed, direction)
-                        self.addCarToAllCars[self.key] = self
+                        self.addCarToAllCars(self)
                     elif direction == "S":
                         newLocation = (location[0], location[1] + speed)
                         self.state = (newLocation, speed, direction)
-                        self.addCarToAllCars[self.key] = self
+                        self.addCarToAllCars(self)
                     elif direction == "W":
                         newLocation = (location[0] - speed, location[1])
                         self.state = (newLocation, speed, direction)
-                        self.addCarToAllCars[self.key] = self
+                        self.addCarToAllCars(self)
                     elif direction == "E":
                         newLocation = (location[0] + speed, location[1])
                         self.state = (newLocation, speed, direction)
-                        self.addCarToAllCars[self.key] = self
+                        self.addCarToAllCars(self)
                     else:
                         print("<!> ERROR <!>\n")
         return 1
