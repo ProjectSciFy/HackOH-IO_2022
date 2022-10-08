@@ -1,6 +1,6 @@
 class Car:
     allCars = dict()
-    
+
     def __init__(self, location, speed, direction, size):
         # format of roadParams: (direction, lowerBound, upperBound)
         # initially: start on right side, middle of lane and road, towards West
@@ -13,31 +13,31 @@ class Car:
         self.goal = (800, 600)
         self.inTransition = False
         self.context = (50, self.inTransition, [[False, False, False], [True, self, True], [False, False, False]])
-    
+
     def getAllCars(self):
         return self.allCars
-    
+
     def addCarToAllCars(self, key, car):
         self.allCars[key] = car
-        
+
     def getState(self):
         return self.state
-    
+
     def setState(self, location, speed, direction):
         self.state = (location, speed, direction)
-    
+
     def getContext(self):
         return self.context
-        
+
     def setContext(self, neighbors):
         self.context = (self.inTransition, neighbors)
-    
+
     def getRoute(self):
         return (self.start, self.goal)
-    
+
     def setRoute(self, goal):
         self.goal = goal
-    
+
     def inAccident(self):
         neighbors = self.context[2]
         selfX = self.state[0][0]
@@ -77,8 +77,8 @@ class Car:
                             return True
                         elif minX >= maxXn and minY >= maxYn and j == 2 and i == 2:
                             return True
-        return False         
-        
+        return False
+
     def distAlgo(self, /, roadParams = ("W", 300, 300)):
         self.roadParams = roadParams
         while self.state[0] != self.getRoute()[1] and (self.state[0][0] >= 0 and self.state[0][0] <= 800 and self.state[0][1] >= 0 and self.state[0][1] <= 600):
