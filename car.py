@@ -1,3 +1,5 @@
+import threading
+
 class Car:
     allCars = dict()
     
@@ -16,10 +18,15 @@ class Car:
         self.context = (50, self.inTransition, [[False, False, False], [True, self, True], [False, False, False]])
     
     def getAllCars(self):
-        return self.allCars
+        lock.acquire()
+        all_cars = self.allCars
+        lock.release()
+        return all_cars
     
     def addCarToAllCars(self, car):
+        lock.acquire()
         self.allCars[self.key] = car
+        lock.release()
         
     def getState(self):
         return self.state
