@@ -15,9 +15,9 @@ amFather = False
 children = []
 temp = 0
 for i in range(int(num)):
-    tempCar = CAR.Car((location[0] - (int(i) * 100), location[1]), speed, direction, size)
+    tempCar = CAR.Car((location[0] - (int(i) * 100), location[1]), speed, direction, size, i)
     cars.append(tempCar)
-    CAR.Car.addCarToAllCars(tempCar, i, tempCar)
+    CAR.Car.addCarToAllCars(tempCar, tempCar)
     print(f"\tStart of car {i + 1}: ", cars[i].getState())
     temp = i
     # for i in CAR.Car.allCars.keys():
