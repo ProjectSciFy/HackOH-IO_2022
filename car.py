@@ -1,7 +1,10 @@
 class Car:
-    def __init__(self, location, speed, direction, size):
+    allCars = dict()
+    
+    def __init__(self, location, speed, direction, size, key):
         # format of roadParams: (direction, lowerBound, upperBound)
         # initially: start on right side, middle of lane and road, towards West
+        self.key = key
         self.roadParams = ("W", 300, 300)
         self.size = size
         self.context = None
@@ -11,6 +14,12 @@ class Car:
         self.goal = (800, 600)
         self.inTransition = False
         self.context = (50, self.inTransition, [[False, False, False], [True, self, True], [False, False, False]])
+    
+    def getAllCars(self):
+        return self.allCars
+    
+    def addCarToAllCars(self, car):
+        self.allCars[self.key] = car
         
     def getState(self):
         return self.state
@@ -21,15 +30,15 @@ class Car:
     def getContext(self):
         return self.context
         
-    def setContext(self, speedLimit, neighbors):
-        self.context = (speedLimit, self.inTransition, neighbors)
-        
+    def setContext(self, neighbors):
+        self.context = (self.inTransition, neighbors)
+    
     def getRoute(self):
         return (self.start, self.goal)
     
     def setRoute(self, goal):
         self.goal = goal
-        
+    
     def inAccident(self):
         neighbors = self.context[2]
         selfX = self.state[0][0]
@@ -71,10 +80,9 @@ class Car:
                             return True
         return False         
         
-    # fun!
     def distAlgo(self, /, roadParams = ("W", 300, 300)):
         self.roadParams = roadParams
-        while self.state[0] != self.getRoute()[1] and self.state[0][0] >= 0 and self.state[0][0] <= 800 and self.state[0][1] >= 0 and self.state[0][1] <= 600:
+        while self.state[0] != self.getRoute()[1] and (self.state[0][0] >= 0 and self.state[0][0] <= 800 and self.state[0][1] >= 0 and self.state[0][1] <= 600):
             if not self.inTransition:
                 if self.inAccident():
                     return -1
