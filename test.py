@@ -12,18 +12,19 @@ def setup():
     cars = list()
     temp = 0
     for i in range(int(num)):
-        tempCar = CAR.Car((location[0] - (int(i) * 100), location[1]), speed, direction, size, i, lane_left_to_right)
+        tempCar = CAR.Car((location[0] - (int(i) * 100), location[1]), speed, direction, size, i)
         tempCar.setRoute((0, 300))
         cars.append(tempCar)
         tempCar.addCarToAllCars(tempCar)
         print(f"\tStart of car {i}: ", cars[i].getState())
         temp = i
-        # for i in CAR.Car.allCars.keys():
-        #     print(i, CAR.Car.allCars[i].getState())
     temp += 1
     # car moving other way:
-    # cars.append(CAR.Car((700, 300), 50, "W", size))
-    # print(f"\tStart of car {temp + 1}: ", cars[temp].getState())
+    # tCar = CAR.Car((0, 300), speed, "E", size, temp)
+    # tCar.setRoute((800, 300))
+    # cars.append(tCar)
+    # tCar.addCarToAllCars(tCar)
+    # print(f"\tStart of car {temp}: ", cars[temp].getState())
     updateCars(cars)
 
 def updateCars(cars):
