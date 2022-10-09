@@ -14,7 +14,7 @@ def setup():
     for i in range(int(num)):
         lane = random.randrange(int(lanes))
         tempCar = CAR.Car((location[0], location[1] - (lane * 30)), speed, direction, lane, size, i, lanes, lane_left_to_right)
-        tempCar.setRoute((0, 300 - 30 * lane))
+        tempCar.setRoute((0, 300 - lane_left_to_right[0] * lane))
         cars.append(tempCar)
         tempCar.addCarToAllCars(tempCar)
         print(f"\tStart of car {i}: ", cars[i].getState())
