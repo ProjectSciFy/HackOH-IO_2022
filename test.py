@@ -10,13 +10,13 @@ def setup():
     location = (800, 300)
     if direction1 == "N":
         location = (400, 600)
-    speed = 10
+    speed = 6
     size = (20, 20)
     lane_left_to_right = (30, 315 + 30 * (int(lanes) - 1), 285 - 30 * (int(lanes) - 1))
     cars = list()
     for i in range(num):
         lane = random.randrange(int(lanes))
-        tempCar = CAR.Car((location[0], location[1] - (lane * 30)), speed, direction1, lane, size, i, lanes, lane_left_to_right)
+        tempCar = CAR.Car((location[0], location[1] - (i * 180)), speed/2, direction1, lane, size, i, lanes, lane_left_to_right)
         if direction1 == "W":
             tempCar.setRoute((0, 300 - lane_left_to_right[0] * lane))
         if direction1 == "N":
@@ -31,7 +31,7 @@ def setup():
     cars.append(tCar)
     tCar.addCarToAllCars(tCar)
     print(f"\tStart of car {temp} heading W: ", cars[temp].getState())
-    
+
     with open("1c_1l_W.txt") as f:
         input = f.readlines()
     num = int(input[0])
@@ -43,7 +43,7 @@ def setup():
     i = temp + 1
     while i < num + temp + 1:
         lane = random.randrange(int(lanes))
-        tempCar = CAR.Car((location[0], location[1] - (lane * 30)), speed, direction2, lane, size, i, lanes, lane_left_to_right)
+        tempCar = CAR.Car((location[0] - 80 * (i - 1), location[1] - (lane * 30)), int(speed / int(i/2)), direction2, lane, size, i, lanes, lane_left_to_right)
         if direction2 == "W":
             tempCar.setRoute((0, 300 - lane_left_to_right[0] * lane))
         if direction2 == "N":
@@ -56,7 +56,7 @@ def setup():
 
 def updateCars(cars, lanes):
     iter = 0
-    while len(CAR.Car.allCars) > 0 and iter < 200:
+    while len(CAR.Car.allCars) > 0 and iter < 1000:
         for car in cars:
             temp = car.distAlgo(car.getState()[2], 300, 300, lanes)
             if temp == 69:
@@ -64,7 +64,7 @@ def updateCars(cars, lanes):
                 break
             elif temp == 10:
                 print(f"\tCar {car.key} detected a stopped object on road and stopped at: ", car.getState())
-                exit(1)
+                break
         iter += 1
             
 setup()
