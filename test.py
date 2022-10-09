@@ -1,3 +1,8 @@
+'''
+NOTE THAT THIS FILE DOES NOT RUN THE MOST CURRENT CODE--LOOK AT 'sim.py'.
+'''
+
+
 import car as CAR
 import random
 
