@@ -3,6 +3,7 @@ import os
 
 def setup():
     num = input("Number of cars: \n")
+    lanes = input("Number of lanes: \n")
     location = (800, 300)
     speed = 20
     direction = "W"
@@ -12,7 +13,7 @@ def setup():
     children = []
     temp = 0
     for i in range(int(num)):
-        tempCar = CAR.Car((location[0] - (int(i) * 100), location[1]), speed, direction, size, i)
+        tempCar = CAR.Car((location[0] - (int(i) * 100), location[1]), speed, direction, size, i, lanes)
         tempCar.setRoute((0, 300))
         cars.append(tempCar)
         CAR.Car.addCarToAllCars(tempCar, tempCar)
