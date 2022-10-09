@@ -11,6 +11,7 @@ speed = 20
 direction = "W"
 size = (20, 20)
 cars = list()
+lane_left_to_right = (30, 360, 240) # Lane length, Top out lane, Bottom out lane
 amFather = False
 children = []
 temp = 0
