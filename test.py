@@ -2,8 +2,10 @@ import car as CAR
 import random
 
 def setup():
-    num = input("Number of cars: \n")
-    lanes = input("Number of lanes: \n")
+    with open("1c_1l.txt") as f:
+        input = f.readlines()
+    num = input[0]
+    lanes = input[1]
     location = (800, 300)
     speed = 20
     direction = "W"
