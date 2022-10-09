@@ -132,7 +132,7 @@ class Car:
         return (False, None)   
     
     def inBounds(self):
-        return (self.state[0][0] >= 0 and self.state[0][0] <= 800 and self.state[0][1] >= 0 and self.state[0][1] <= 600)
+        return (self.state[0][0] < 0 and self.state[2] != "E") or (self.state[0][0] > 800 and self.state[2] != "W") or (self.state[0][1] < 0 and self.state[2] != "S") or (self.state[0][1] > 600 and self.state[2] != "N") 
         
     def atGoal(self):
         x_goal = self.goal[0]
@@ -146,7 +146,7 @@ class Car:
     def distAlgo(self, /, direction, lowerBound, upperBound, lanes):
         self.roadParams = (direction, lowerBound, upperBound, lanes)
         if not self.stopped:
-            if not self.atGoal() and self.inBounds():
+            if not self.atGoal() and not self.inBounds():
                 our_matrix = self.getAllCars()
                 self.setContext(our_matrix.values())
                 if type(self.context[1][1][0]) == type(self):
