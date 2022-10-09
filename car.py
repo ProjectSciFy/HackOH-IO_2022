@@ -5,7 +5,7 @@ obj = Semaphore(1)
 class Car:
     allCars = dict()
     
-    def __init__(self, location, speed, direction, size, key, lane_left_to_right):
+    def __init__(self, location, speed, direction, size, key):
         self.stopped = False
         # format of roadParams: (direction, lowerBound, upperBound)
         # initially: start on right side, middle of lane and road, towards West
@@ -19,7 +19,6 @@ class Car:
         self.goal = (800, 600)
         self.inTransition = False
         self.context = (self.inTransition, [[False, False, False], [True, self, True], [False, False, False]])
-        self.lane_left_to_right = lane_left_to_right
     
     def getKey(self):
         return self.key
@@ -111,24 +110,24 @@ class Car:
                         # check collision
                         # left column
                         if maxX <= minXn and maxY <= minYn and j == 0 and i == 0:
-                            return True
+                            return (True, neighbor)
                         elif maxX <= minXn and j == 0 and i == 1:
-                            return True
+                            return (True, neighbor)
                         elif maxX <= minXn and minY >= maxYn and j == 0 and i == 2:
-                            return True
+                            return (True, neighbor)
                         # middle column
                         elif maxY <= minYn and j == 1 and i == 0:
-                            return True
+                            return (True, neighbor)
                         elif minY >= maxYn and j == 1 and i == 2:
-                            return True
+                            return (True, neighbor)
                         # right column
                         elif minX >= maxXn and maxY <= minYn and j == 2 and i == 0:
-                            return True
+                            return (True, neighbor)
                         elif minX >= maxXn and j == 2 and i == 1:
-                            return True
+                            return (True, neighbor)
                         elif minX >= maxXn and minY >= maxYn and j == 2 and i == 2:
-                            return True
-        return False         
+                            return (True, neighbor)
+        return (False, None)   
     
     def inBounds(self):
         return (self.state[0][0] >= 0 and self.state[0][0] <= 800 and self.state[0][1] >= 0 and self.state[0][1] <= 600)
@@ -150,10 +149,13 @@ class Car:
                 self.setContext(our_matrix.values())
                 if not self.inTransition:
                     print(self.key, self.state[0])
-                    if self.inAccident():
-                        print(f"--!--  Car crashed at {self.state[0]} going {self.state[2]} at a speed of {self.state[1]}  --!--")
+                    accident = self.inAccident()
+                    if accident[0]:
+                        print(f"--!--  Car crash at {self.state[0]}; Cars involved: Car #{self.key} and Car #{accident[1].key}  --!--")
                         self.allCars.pop(self.key)
+                        self.allCars.pop(accident[1].key)
                         self.stopped = True
+                        accident[1].stopped = True
                         return -1
                     else:
                         location = self.state[0]
