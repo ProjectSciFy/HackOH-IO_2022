@@ -12,7 +12,7 @@ def setup():
     cars = list()
     temp = 0
     for i in range(int(num)):
-        tempCar = CAR.Car((location[0] - (int(i) * 100), location[1]), speed, direction, size, i)
+        tempCar = CAR.Car((location[0] - (int(i) * 100), location[1]), speed, direction, size, i, lane_left_to_right)
         tempCar.setRoute((0, 300))
         cars.append(tempCar)
         tempCar.addCarToAllCars(tempCar)
