@@ -5,7 +5,8 @@ obj = Semaphore(1)
 class Car:
     allCars = dict()
     
-    def __init__(self, location, speed, direction, size, key):
+    def __init__(self, location, speed, direction, size, key, lane_left_to_right):
+        self.stopped = False
         # format of roadParams: (direction, lowerBound, upperBound)
         # initially: start on right side, middle of lane and road, towards West
         self.key = key
@@ -18,6 +19,10 @@ class Car:
         self.goal = (800, 600)
         self.inTransition = False
         self.context = (self.inTransition, [[False, False, False], [True, self, True], [False, False, False]])
+        self.lane_left_to_right = lane_left_to_right
+    
+    def getKey(self):
+        return self.key
     
     def getAllCars(self):
         obj.acquire()
@@ -42,11 +47,11 @@ class Car:
         
     def setContext(self, neighbors):
         self.context = (self.inTransition, [[False, False, False], [True, self, True], [False, False, False]])
+        y_size = self.size[1]
+        x_size = self.size[0]
+        x_loc = self.state[0][0]
+        y_loc = self.state[0][1]
         for neighbor in neighbors:
-            y_size = self.size[1]
-            x_size = self.size[0]
-            x_loc = self.state[0][0]
-            y_loc = self.state[0][1]
             # Bottom Right
             if ((y_loc + y_size/2 + (2 * y_size)) <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc + x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2 + 2 * x_size):
                 self.context[1][2][2] = neighbor
@@ -71,6 +76,10 @@ class Car:
             # Bottom
             elif (y_loc + y_size/2 + (2 * y_size) <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc - x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2):
                 self.context[1][1][2] = neighbor
+        if (y_loc + self.lane_left_to_right[0] <= self.lane_left_to_right):
+            self.context[1][0] = [True, True, True]
+        if (self.lane_left_to_right[0] <= y_loc):
+            self.context[1][2] = [True, True, True]
         self.addCarToAllCars(self)
     
     def getRoute(self):
@@ -135,33 +144,55 @@ class Car:
     
     def distAlgo(self, /, roadParams = ("W", 300, 300)):
         self.roadParams = roadParams
-        while not self.atGoal() and self.inBounds():
-            our_matrix = self.getAllCars()
-            self.setContext(our_matrix.values())
-            if not self.inTransition:
-                if self.inAccident():
-                    print(f"--!--  Car crashed at {self.state[0]} going {self.state[2]} at a speed of {self.state[1]}  --!--")
-                    return -1
-                else:
-                    location = self.state[0]
-                    speed = self.state[1]
-                    direction = self.state[2]
-                    if direction == "N":
-                        newLocation = (location[0], location[1] - speed)
-                        self.state = (newLocation, speed, direction)
-                        self.addCarToAllCars(self)
-                    elif direction == "S":
-                        newLocation = (location[0], location[1] + speed)
-                        self.state = (newLocation, speed, direction)
-                        self.addCarToAllCars(self)
-                    elif direction == "W":
-                        newLocation = (location[0] - speed, location[1])
-                        self.state = (newLocation, speed, direction)
-                        self.addCarToAllCars(self)
-                    elif direction == "E":
-                        newLocation = (location[0] + speed, location[1])
-                        self.state = (newLocation, speed, direction)
-                        self.addCarToAllCars(self)
+        if not self.stopped:
+            if not self.atGoal() and self.inBounds():
+                our_matrix = self.getAllCars()
+                self.setContext(our_matrix.values())
+                if not self.inTransition:
+                    print(self.key, self.state[0])
+                    if self.inAccident():
+                        print(f"--!--  Car crashed at {self.state[0]} going {self.state[2]} at a speed of {self.state[1]}  --!--")
+                        self.allCars.pop(self.key)
+                        self.stopped = True
+                        return -1
                     else:
-                        print("<!> ERROR <!>\n")
-        return 1
+                        location = self.state[0]
+                        speed = self.state[1]
+                        direction = self.state[2]
+                        if direction == "N":
+                            newLocation = (location[0], location[1] - speed)
+                            self.state = (newLocation, speed, direction)
+                            self.addCarToAllCars(self)
+                        elif direction == "S":
+                            newLocation = (location[0], location[1] + speed)
+                            self.state = (newLocation, speed, direction)
+                            self.addCarToAllCars(self)
+                        elif direction == "W":
+                            newLocation = (location[0] - speed, location[1])
+                            self.state = (newLocation, speed, direction)
+                            self.addCarToAllCars(self)
+                        elif direction == "E":
+                            newLocation = (location[0] + speed, location[1])
+                            self.state = (newLocation, speed, direction)
+                            self.addCarToAllCars(self)
+                        else:
+                            print("<!> ERROR <!>\n")
+                            self.allCars.pop(self.key)
+                            self.stopped = True
+                            return 1
+                else:
+                    self.allCars.pop(self.key)
+                    self.stopped = True
+                    return 2
+            elif not self.atGoal() and not self.inBounds():
+                self.allCars.pop(self.key)
+                self.stopped = True
+                return 0
+            elif self.atGoal():
+                self.allCars.pop(self.key)
+                self.stopped = True
+                return 69
+            else:
+                self.allCars.pop(self.key)
+                self.stopped = True
+                return 420

@@ -76,9 +76,9 @@ class Car:
             # Bottom
             elif (y_loc + y_size/2 + (2 * y_size) <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc - x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2):
                 self.context[1][1][2] = neighbor
-        if (y_loc + self.lane_left_to_right[0] <= self.lane_left_to_right):
+        if (y_loc + 30 <= self.lane_left_to_right[0]):
             self.context[1][0] = [True, True, True]
-        if (self.lane_left_to_right[0] <= y_loc):
+        if (self.lane_left_to_right[0] + 30 <= y_loc):
             self.context[1][2] = [True, True, True]
         self.addCarToAllCars(self)
     

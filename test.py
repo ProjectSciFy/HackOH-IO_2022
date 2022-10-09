@@ -8,7 +8,7 @@ def setup():
     speed = 20
     direction = "W"
     size = (20, 20)
-    lane_left_to_right = (30, 315 + 30*lanes, 285 + 30*lanes)
+    lane_left_to_right = (30, 315 + 30 * int(lanes), 285 + 30 * int(lanes))
     cars = list()
     temp = 0
     for i in range(int(num)):
