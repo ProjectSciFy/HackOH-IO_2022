@@ -78,7 +78,7 @@ def update(cars):
         draw_car(car)
 
 def draw_car(car):
-    state = car.getState();
+    state = car.getState()
     x = state[0][0]
     y = state[0][1]
     width_scale = 1.5
@@ -118,13 +118,13 @@ def setup():
     location = (800, 300)
     if direction1 == "N":
         location = (400, 600)
-    speed = 2
+    speed = 6
     size = (20, 20)
     lane_left_to_right = (30, 315 + 30 * (int(lanes) - 1), 285 - 30 * (int(lanes) - 1))
     cars = list()
     for i in range(num):
         lane = random.randrange(int(lanes))
-        tempCar = CAR.Car((location[0], location[1] - (lane * 30)), speed, direction1, lane, size, i, lanes, lane_left_to_right)
+        tempCar = CAR.Car((location[0], location[1] - (i * 180)), speed/2, direction1, lane, size, i, lanes, lane_left_to_right)
         if direction1 == "W":
             tempCar.setRoute((0, 300 - lane_left_to_right[0] * lane))
         if direction1 == "N":
@@ -151,7 +151,7 @@ def setup():
     i = temp + 1
     while i < num + temp + 1:
         lane = random.randrange(int(lanes))
-        tempCar = CAR.Car((location[0], location[1] - (lane * 30)), speed, direction2, lane, size, i, lanes, lane_left_to_right)
+        tempCar = CAR.Car((location[0] - 80 * (i - 1), location[1] - (lane * 30)), int(speed / int(i/2)), direction2, lane, size, i, lanes, lane_left_to_right)
         if direction2 == "W":
             tempCar.setRoute((0, 300 - lane_left_to_right[0] * lane))
         if direction2 == "N":
@@ -167,15 +167,15 @@ def setup():
 
 def updateCars(cars, lanes):
     iter = 0
-    while len(CAR.Car.allCars) > 0 and iter < 800:
+    while len(CAR.Car.allCars) > 0 and iter < 1000:
         for car in cars:
             temp = car.distAlgo(car.getState()[2], 300, 300, lanes)
             if temp == 69:
                 print(f"\tEnd of car {car.key}: ", car.getState())
                 break
-            elif temp == 10:
-                print(f"\tCar {car.key} detected a stopped object on road and stopped at: ", car.getState())
-                exit(1)
+            # elif temp == 10:
+            #     print(f"\tCar {car.key} detected a stopped object on road and stopped at: ", car.getState())
+            #     break
         iter += 1
 
 
@@ -189,7 +189,7 @@ def updateCars(cars, lanes):
 
         clock.tick(refresh_rate)
 
-    message("Simulation Over",red, 200, 200)
+    message("Simulation Terminated",red, 200, 200)
     pygame.display.update()
     time.sleep(0.2)
     pygame.quit()
