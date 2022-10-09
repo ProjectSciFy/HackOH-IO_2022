@@ -1,5 +1,5 @@
 import car as CAR
-import os
+import random
 
 def setup():
     num = input("Number of cars: \n")
@@ -12,7 +12,8 @@ def setup():
     cars = list()
     temp = 0
     for i in range(int(num)):
-        tempCar = CAR.Car((location[0] - (int(i) * 100), location[1]), speed, direction, size, i, lane_left_to_right)
+        lane = random.randrange(int(lanes))
+        tempCar = CAR.Car((location[0], location[1] - (lane * 30)), speed, direction, lane, size, i, lanes, lane_left_to_right)
         tempCar.setRoute((0, 300))
         cars.append(tempCar)
         tempCar.addCarToAllCars(tempCar)
@@ -25,12 +26,12 @@ def setup():
     # cars.append(tCar)
     # tCar.addCarToAllCars(tCar)
     # print(f"\tStart of car {temp}: ", cars[temp].getState())
-    updateCars(cars)
+    updateCars(cars, lanes)
 
-def updateCars(cars):
+def updateCars(cars, lanes):
     while len(CAR.Car.allCars) > 0:
         for car in cars:
-            temp = car.distAlgo()
+            temp = car.distAlgo("W", 300, 300, lanes)
             if temp == 69:
                 print(f"\tEnd of car {car.key}: ", car.getState())
                 break
