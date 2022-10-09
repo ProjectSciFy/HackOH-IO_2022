@@ -1,6 +1,7 @@
 from threading import *
 
 obj = Semaphore(1) 
+tolerance = 6
 
 class Car:
     allCars = dict()
@@ -56,25 +57,25 @@ class Car:
             if ((y_loc + y_size/2 + (2 * y_size)) <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc + x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2 + 2 * x_size):
                 self.context[1][2][2] = neighbor
             # Right
-            elif (y_loc - y_size/2 <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc + x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2 + 2 * x_size):
+            elif (y_loc - y_size/2 - tolerance <= neighbor.state[0][1] <= y_loc + y_size/2 + tolerance) and (x_loc + x_size/2 - tolerance <= neighbor.state[0][0] <= x_loc + x_size/2 + 2 * x_size + tolerance):
                 self.context[1][2][1] = neighbor
             # Top Right
-            elif (y_loc - y_size/2 <= neighbor.state[0][1] <= (y_loc - y_size/2 - (2 * y_size))) and (x_loc+ x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2 + 2 * x_size):
+            elif (y_loc - y_size/2 - tolerance <= neighbor.state[0][1] <= (y_loc - y_size/2 - (2 * y_size) + tolerance)) and (x_loc+ x_size/2 - tolerance <= neighbor.state[0][0] <= x_loc + x_size/2 + 2 * x_size + tolerance):
                 self.context[1][2][0] = neighbor
             # Top
-            elif (y_loc - y_size/2 <= neighbor.state[0][1] <= (y_loc - y_size/2 - (2 * y_size))) and (x_loc - x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2):
+            elif (y_loc - y_size/2 - tolerance <= neighbor.state[0][1] <= (y_loc - y_size/2 - (2 * y_size) + tolerance)) and (x_loc - x_size/2 - tolerance <= neighbor.state[0][0] <= x_loc + x_size/2 + tolerance):
                 self.context[1][0][1] = neighbor
             # Top Left
-            elif (y_loc - y_size/2 <= neighbor.state[0][1] <= (y_loc - y_size/2 - (2 * y_size))) and (x_loc - x_size/2 - 2 * x_size <= neighbor.state[0][0] <= x_loc - x_size/2):
+            elif (y_loc - y_size/2 - tolerance <= neighbor.state[0][1] <= (y_loc - y_size/2 - (2 * y_size) + tolerance)) and (x_loc - x_size/2 - 2 * x_size - tolerance <= neighbor.state[0][0] <= x_loc - x_size/2 + tolerance):
                 self.context[1][0][0] = neighbor
             # Left
-            elif (y_loc - y_size/2 <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc - x_size/2 - 2 * x_size <= neighbor.state[0][0] <= x_loc - x_size/2):
+            elif (y_loc - y_size/2 - tolerance <= neighbor.state[0][1] <= y_loc + y_size/2 + tolerance) and (x_loc - x_size/2 - 2 * x_size - tolerance <= neighbor.state[0][0] <= x_loc - x_size/2 + tolerance):
                 self.context[1][1][0] = neighbor
             # Bottom Left
-            elif ((y_loc + y_size/2 + (2 * y_size)) <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc - x_size/2 <= neighbor.state[0][0] <= x_loc - x_size/2 - 2 * x_size):
+            elif ((y_loc + y_size/2 + (2 * y_size)) - tolerance <= neighbor.state[0][1] <= y_loc + y_size/2 + tolerance) and (x_loc - x_size/2 - tolerance <= neighbor.state[0][0] <= x_loc - x_size/2 - 2 * x_size + tolerance):
                 self.context[1][0][2] = neighbor
             # Bottom
-            elif (y_loc + y_size/2 + (2 * y_size) <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc - x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2):
+            elif (y_loc + y_size/2 + (2 * y_size) - tolerance <= neighbor.state[0][1] <= y_loc + y_size/2 + tolerance) and (x_loc - x_size/2 - tolerance <= neighbor.state[0][0] <= x_loc + x_size/2 + tolerance):
                 self.context[1][1][2] = neighbor
         if (y_loc + self.lane_left_to_right[0] >= self.lane_left_to_right[1]):
             self.context[1][0] = [False, False, False]
@@ -153,16 +154,21 @@ class Car:
                         self.isStopped = True
                         self.speed = 0
                         return 10
+                    else:
+                        if self.context[1][1][0].getState()[2] == self.state[2]:
+                            self.speed = self.context[1][1][0].getState()[1]
+                        else:
+                            self.speed = 0
                 else:
                     if not self.inTransition:
                         # print(self.key, self.state[0])
                         accident = self.inAccident()
                         if accident[0]:
                             print(f"--!--  Car crash at {self.state[0]}; Cars involved: Car #{self.key} and Car #{accident[1].key}  --!--")
-                            self.allCars.pop(self.key)
-                            self.allCars.pop(accident[1].key)
                             self.stopped = True
                             accident[1].stopped = True
+                            accident[1].speed = 0
+                            self.speed = 0
                             return -1
                         else:
                             location = self.state[0]
@@ -189,6 +195,7 @@ class Car:
                                 print("<!> ERROR <!>\n")
                                 self.allCars.pop(self.key)
                                 self.stopped = True
+                                self.speed = 0
                                 return 1
                     else:
                         self.allCars.pop(self.key)
@@ -197,12 +204,15 @@ class Car:
             elif not self.atGoal() and not self.inBounds():
                 self.allCars.pop(self.key)
                 self.stopped = True
+                self.speed = 0
                 return 0
             elif self.atGoal():
                 self.allCars.pop(self.key)
                 self.stopped = True
+                self.speed = 0
                 return 69
             else:
                 self.allCars.pop(self.key)
                 self.stopped = True
+                self.speed = 0
                 return 420
