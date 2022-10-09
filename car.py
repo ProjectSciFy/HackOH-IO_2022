@@ -5,16 +5,16 @@ obj = Semaphore(1)
 class Car:
     allCars = dict()
     
-    def __init__(self, location, speed, direction, size, key, lane_left_to_right):
+    def __init__(self, location, speed, direction, lane, size, key, lanes, lane_left_to_right):
         self.stopped = False
-        # format of roadParams: (direction, lowerBound, upperBound)
+        # format of roadParams: (direction, lowerBound, upperBound, lanes)
         # initially: start on right side, middle of lane and road, towards West
         self.key = key
-        self.roadParams = ("W", 300, 300)
+        self.roadParams = ("W", 300, 300, lanes)
         self.size = size
         self.context = None
         self.start = location
-        self.state = (location, speed, direction)
+        self.state = (location, speed, direction, lane)
         self.start = (800, 300)
         self.goal = (800, 600)
         self.inTransition = False
@@ -38,8 +38,8 @@ class Car:
     def getState(self):
         return self.state
     
-    def setState(self, location, speed, direction):
-        self.state = (location, speed, direction)
+    def setState(self, location, speed, direction, lane):
+        self.state = (location, speed, direction, lane)
         self.addCarToAllCars(self)
     
     def getContext(self):
@@ -142,8 +142,8 @@ class Car:
         ySize = self.size[1]/2
         return (x_loc - xSize <= x_goal <= x_loc + xSize) and (y_loc - ySize <= y_goal <= y_loc + ySize)
     
-    def distAlgo(self, /, roadParams = ("W", 300, 300)):
-        self.roadParams = roadParams
+    def distAlgo(self, /, direction, lowerBound, upperBound, lanes):
+        self.roadParams = (direction, lowerBound, upperBound, lanes)
         if not self.stopped:
             if not self.atGoal() and self.inBounds():
                 our_matrix = self.getAllCars()
@@ -162,21 +162,22 @@ class Car:
                         location = self.state[0]
                         speed = self.state[1]
                         direction = self.state[2]
+                        lane = self.state[3]
                         if direction == "N":
                             newLocation = (location[0], location[1] - speed)
-                            self.state = (newLocation, speed, direction)
+                            self.state = (newLocation, speed, direction, lane)
                             self.addCarToAllCars(self)
                         elif direction == "S":
                             newLocation = (location[0], location[1] + speed)
-                            self.state = (newLocation, speed, direction)
+                            self.state = (newLocation, speed, direction, lane)
                             self.addCarToAllCars(self)
                         elif direction == "W":
                             newLocation = (location[0] - speed, location[1])
-                            self.state = (newLocation, speed, direction)
+                            self.state = (newLocation, speed, direction, lane)
                             self.addCarToAllCars(self)
                         elif direction == "E":
                             newLocation = (location[0] + speed, location[1])
-                            self.state = (newLocation, speed, direction)
+                            self.state = (newLocation, speed, direction, lane)
                             self.addCarToAllCars(self)
                         else:
                             print("<!> ERROR <!>\n")
