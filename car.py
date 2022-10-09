@@ -46,7 +46,7 @@ class Car:
         return self.context
         
     def setContext(self, neighbors):
-        self.context = (self.inTransition, [[False, False, False], [True, self, True], [False, False, False]])
+        self.context = (self.inTransition, [[True, True, True], [True, self, True], [True, True, True]])
         y_size = self.size[1]
         x_size = self.size[0]
         x_loc = self.state[0][0]
@@ -63,23 +63,23 @@ class Car:
                 self.context[1][2][0] = neighbor
             # Top
             elif (y_loc - y_size/2 <= neighbor.state[0][1] <= (y_loc - y_size/2 - (2 * y_size))) and (x_loc - x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2):
-                self.context[1][1][0] = neighbor
+                self.context[1][0][1] = neighbor
             # Top Left
             elif (y_loc - y_size/2 <= neighbor.state[0][1] <= (y_loc - y_size/2 - (2 * y_size))) and (x_loc - x_size/2 - 2 * x_size <= neighbor.state[0][0] <= x_loc - x_size/2):
                 self.context[1][0][0] = neighbor
             # Left
             elif (y_loc - y_size/2 <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc - x_size/2 - 2 * x_size <= neighbor.state[0][0] <= x_loc - x_size/2):
-                self.context[1][0][1] = neighbor
+                self.context[1][1][0] = neighbor
             # Bottom Left
             elif ((y_loc + y_size/2 + (2 * y_size)) <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc - x_size/2 <= neighbor.state[0][0] <= x_loc - x_size/2 - 2 * x_size):
                 self.context[1][0][2] = neighbor
             # Bottom
             elif (y_loc + y_size/2 + (2 * y_size) <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc - x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2):
                 self.context[1][1][2] = neighbor
-        if (y_loc + 30 <= self.lane_left_to_right[0]):
-            self.context[1][0] = [True, True, True]
-        if (self.lane_left_to_right[0] + 30 <= y_loc):
-            self.context[1][2] = [True, True, True]
+        if (y_loc + self.lane_left_to_right[0] >= self.lane_left_to_right[1]):
+            self.context[1][0] = [False, False, False]
+        if (self.lane_left_to_right[2] >= y_loc - self.lane_left_to_right[0]):
+            self.context[1][2] = [False, False, False]
         self.addCarToAllCars(self)
     
     def getRoute(self):
@@ -148,46 +148,52 @@ class Car:
             if not self.atGoal() and self.inBounds():
                 our_matrix = self.getAllCars()
                 self.setContext(our_matrix.values())
-                if not self.inTransition:
-                    print(self.key, self.state[0])
-                    accident = self.inAccident()
-                    if accident[0]:
-                        print(f"--!--  Car crash at {self.state[0]}; Cars involved: Car #{self.key} and Car #{accident[1].key}  --!--")
-                        self.allCars.pop(self.key)
-                        self.allCars.pop(accident[1].key)
-                        self.stopped = True
-                        accident[1].stopped = True
-                        return -1
-                    else:
-                        location = self.state[0]
-                        speed = self.state[1]
-                        direction = self.state[2]
-                        lane = self.state[3]
-                        if direction == "N":
-                            newLocation = (location[0], location[1] - speed)
-                            self.state = (newLocation, speed, direction, lane)
-                            self.addCarToAllCars(self)
-                        elif direction == "S":
-                            newLocation = (location[0], location[1] + speed)
-                            self.state = (newLocation, speed, direction, lane)
-                            self.addCarToAllCars(self)
-                        elif direction == "W":
-                            newLocation = (location[0] - speed, location[1])
-                            self.state = (newLocation, speed, direction, lane)
-                            self.addCarToAllCars(self)
-                        elif direction == "E":
-                            newLocation = (location[0] + speed, location[1])
-                            self.state = (newLocation, speed, direction, lane)
-                            self.addCarToAllCars(self)
-                        else:
-                            print("<!> ERROR <!>\n")
-                            self.allCars.pop(self.key)
-                            self.stopped = True
-                            return 1
+                if type(self.context[1][1][0]) == type(self):
+                    if self.context[1][1][0].getState()[1] == 0:
+                        self.isStopped = True
+                        self.speed = 0
+                        return 10
                 else:
-                    self.allCars.pop(self.key)
-                    self.stopped = True
-                    return 2
+                    if not self.inTransition:
+                        # print(self.key, self.state[0])
+                        accident = self.inAccident()
+                        if accident[0]:
+                            print(f"--!--  Car crash at {self.state[0]}; Cars involved: Car #{self.key} and Car #{accident[1].key}  --!--")
+                            self.allCars.pop(self.key)
+                            self.allCars.pop(accident[1].key)
+                            self.stopped = True
+                            accident[1].stopped = True
+                            return -1
+                        else:
+                            location = self.state[0]
+                            speed = self.state[1]
+                            direction = self.state[2]
+                            lane = self.state[3]
+                            if direction == "N":
+                                newLocation = (location[0], location[1] - speed)
+                                self.state = (newLocation, speed, direction, lane)
+                                self.addCarToAllCars(self)
+                            elif direction == "S":
+                                newLocation = (location[0], location[1] + speed)
+                                self.state = (newLocation, speed, direction, lane)
+                                self.addCarToAllCars(self)
+                            elif direction == "W":
+                                newLocation = (location[0] - speed, location[1])
+                                self.state = (newLocation, speed, direction, lane)
+                                self.addCarToAllCars(self)
+                            elif direction == "E":
+                                newLocation = (location[0] + speed, location[1])
+                                self.state = (newLocation, speed, direction, lane)
+                                self.addCarToAllCars(self)
+                            else:
+                                print("<!> ERROR <!>\n")
+                                self.allCars.pop(self.key)
+                                self.stopped = True
+                                return 1
+                    else:
+                        self.allCars.pop(self.key)
+                        self.stopped = True
+                        return 2
             elif not self.atGoal() and not self.inBounds():
                 self.allCars.pop(self.key)
                 self.stopped = True
