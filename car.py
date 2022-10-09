@@ -5,7 +5,7 @@ obj = Semaphore(1)
 class Car:
     allCars = dict()
     
-    def __init__(self, location, speed, direction, size, key):
+    def __init__(self, location, speed, direction, size, key, lane_left_to_right):
         self.stopped = False
         # format of roadParams: (direction, lowerBound, upperBound)
         # initially: start on right side, middle of lane and road, towards West
@@ -19,6 +19,7 @@ class Car:
         self.goal = (800, 600)
         self.inTransition = False
         self.context = (self.inTransition, [[False, False, False], [True, self, True], [False, False, False]])
+        self.lane_left_to_right = lane_left_to_right
     
     def getKey(self):
         return self.key
@@ -46,11 +47,11 @@ class Car:
         
     def setContext(self, neighbors):
         self.context = (self.inTransition, [[False, False, False], [True, self, True], [False, False, False]])
+        y_size = self.size[1]
+        x_size = self.size[0]
+        x_loc = self.state[0][0]
+        y_loc = self.state[0][1]
         for neighbor in neighbors:
-            y_size = self.size[1]
-            x_size = self.size[0]
-            x_loc = self.state[0][0]
-            y_loc = self.state[0][1]
             # Bottom Right
             if ((y_loc + y_size/2 + (2 * y_size)) <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc + x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2 + 2 * x_size):
                 self.context[1][2][2] = neighbor
@@ -75,6 +76,10 @@ class Car:
             # Bottom
             elif (y_loc + y_size/2 + (2 * y_size) <= neighbor.state[0][1] <= y_loc + y_size/2) and (x_loc - x_size/2 <= neighbor.state[0][0] <= x_loc + x_size/2):
                 self.context[1][1][2] = neighbor
+        if (y_loc + self.lane_left_to_right[0] <= self.lane_left_to_right):
+            self.context[1][0] = [True, True, True]
+        if (self.lane_left_to_right[0] <= y_loc):
+            self.context[1][2] = [True, True, True]
         self.addCarToAllCars(self)
     
     def getRoute(self):
