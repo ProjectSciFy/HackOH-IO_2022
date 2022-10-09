@@ -14,7 +14,6 @@ def setup():
     size = (20, 20)
     lane_left_to_right = (30, 315 + 30 * (int(lanes) - 1), 285 - 30 * (int(lanes) - 1))
     cars = list()
-    temp = num
     for i in range(num):
         lane = random.randrange(int(lanes))
         tempCar = CAR.Car((location[0], location[1] - (lane * 30)), speed, direction1, lane, size, i, lanes, lane_left_to_right)
@@ -25,13 +24,13 @@ def setup():
         cars.append(tempCar)
         tempCar.addCarToAllCars(tempCar)
         print(f"\tStart of car {i} heading {direction1}: ", cars[i].getState())
-    # temp += 1
+    temp = num
     # car stopped in West lane:
-    # tCar = CAR.Car((100, 300), 0, "E", 0, size, temp, lanes, lane_left_to_right)
-    # tCar.setRoute((800, 300))
-    # cars.append(tCar)
-    # tCar.addCarToAllCars(tCar)
-    # print(f"\tStart of car {temp}: ", cars[temp].getState())
+    tCar = CAR.Car((100, 300), 0, "W", 0, size, temp, lanes, lane_left_to_right)
+    tCar.setRoute((0, 300))
+    cars.append(tCar)
+    tCar.addCarToAllCars(tCar)
+    print(f"\tStart of car {temp} heading W: ", cars[temp].getState())
     
     with open("1c_1l_W.txt") as f:
         input = f.readlines()
@@ -41,8 +40,8 @@ def setup():
     location = (800, 300)
     if direction2 == "N":
         location = (400, 600)
-    i = temp
-    while i < num + temp:
+    i = temp + 1
+    while i < num + temp + 1:
         lane = random.randrange(int(lanes))
         tempCar = CAR.Car((location[0], location[1] - (lane * 30)), speed, direction2, lane, size, i, lanes, lane_left_to_right)
         if direction2 == "W":
