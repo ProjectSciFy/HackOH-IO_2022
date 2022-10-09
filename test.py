@@ -8,12 +8,11 @@ def setup():
     speed = 20
     direction = "W"
     size = (20, 20)
+    lane_left_to_right = (30, 360, 240) # Lane length, Top out lane, Bottom out lane
     cars = list()
-    amFather = False
-    children = []
     temp = 0
     for i in range(int(num)):
-        tempCar = CAR.Car((location[0] - (int(i) * 100), location[1]), speed, direction, size, i, lanes)
+        tempCar = CAR.Car((location[0] - (int(i) * 100), location[1]), speed, direction, size, i, lanes, lane_left_to_right)
         tempCar.setRoute((0, 300))
         cars.append(tempCar)
         CAR.Car.addCarToAllCars(tempCar, tempCar)
